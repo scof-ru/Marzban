@@ -17,7 +17,7 @@ from app.models.user_template import UserTemplateCreate, UserTemplateModify
 
 
 def add_default_host(db: Session, inbound: ProxyInbound):
-    host = ProxyHost(remark="🚀 Marz ({USERNAME}) [{PROTOCOL} - {TRANSPORT}]", address="{SERVER_IP}", inbound=inbound)
+    host = ProxyHost(remark="({USERNAME}) [{PROTOCOL} - {TRANSPORT}]", address="{SERVER_IP}", inbound=inbound)
     db.add(host)
     db.commit()
 

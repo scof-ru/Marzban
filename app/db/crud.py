@@ -533,3 +533,38 @@ def update_node_status(db: Session, dbnode: Node, status: NodeStatus, message: s
     db.commit()
     db.refresh(dbnode)
     return dbnode
+
+
+def get_tguser_by_id(db: Session, user_id: int):
+    return db.query(TgUser).filter(TgUser.id == user_id).first()
+
+
+def create_tguser(db: Session, admin: AdminCreate):
+    tguser = TgUser(
+        username=admin.username,
+        hashed_password=admin.hashed_password,
+        is_sudo=admin.is_sudo
+    )
+    db.add(dbadmin)
+    db.commit()
+    db.refresh(dbadmin)
+    return dbadmin
+
+
+def update_admin(db: Session, dbadmin: Admin, modified_admin: AdminModify):
+    dbadmin.is_sudo = modified_admin.is_sudo
+    dbadmin.hashed_password = modified_admin.hashed_password
+    db.commit()
+    db.refresh(dbadmin)
+    return dbadmin
+
+
+def partial_update_admin(db: Session, dbadmin: Admin, modified_admin: AdminPartialModify):
+    if modified_admin.is_sudo is not None:
+        dbadmin.is_sudo = modified_admin.is_sudo
+    if modified_admin.password is not None:
+        dbadmin.hashed_password = modified_admin.hashed_password
+
+    db.commit()
+    db.refresh(dbadmin)
+    return dbadmin

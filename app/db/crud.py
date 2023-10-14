@@ -539,7 +539,7 @@ def get_tguser_by_id(db: Session, user_id: int):
     return db.query(TgUser).filter(TgUser.id == user_id).first()
 
 
-def create_tguser(db: Session, id: int, username: str, firstname: str, lastname: str = None,  lang: str = None, user_id: int):
+def create_tguser(db: Session, id: int,  user_id: int, username: str, firstname: str, lastname: str = None,  lang: str = None):
     tguser = TgUser(
         id=id,
         username=username,

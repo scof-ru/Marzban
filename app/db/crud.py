@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import and_
 
 from app.db.models import (JWT, Admin, Node, Proxy, ProxyHost, ProxyInbound,
-                           ProxyTypes, System, User, UserTemplate,
+                           ProxyTypes, System, User, TgUser, UserTemplate,
                            UserUsageResetLogs, NodeUserUsage, NodeUsage)
 from app.models.admin import AdminCreate, AdminModify, AdminPartialModify
 from app.models.node import NodeCreate, NodeModify, NodeStatus, NodeUsageResponse

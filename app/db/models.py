@@ -34,7 +34,7 @@ class TgUser(Base):
     lang = Column(String(8), nullable=True)
     user_id = Column(Integer,ForeignKey("users.id"))
     created_at = Column(DateTime, default=datetime.utcnow)
-    users = relationship("User", back_populates="tg_users")
+    users = relationship("User", back_populates="tguser")
 
 
 class User(Base):

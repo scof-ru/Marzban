@@ -84,18 +84,67 @@ To get started, use the buttons below.
 def show_user_info(from_user):
     return str(text)
 
-@bot.callback_query_handler(cb_query_equals('get_info'))
-def get_info_command(call: types.CallbackQuery):
-    text = "<code>{}</code>".format(str(call.message.from_user))
-    # text = show_user_info(call.message.from_user)
+def get_user_info_text(
+        username: str, inbounds: dict, data_limit: int | None = None, usage: int | None = None, expire: int |
+        None = None) -> str:
+    protocols = ""
+    for p, inbounds in inbounds.items():
+        protocols += f"\n├─ <b>{p.upper()}</b>\n"
+        protocols += "├───" + ", ".join([f"<code>{i}</code>" for i in inbounds])
+    text = f"""
+┌ Username: <b>{username}</b>
+├ Usage Limit: <b>{readable_size(data_limit) if data_limit else 'Unlimited'}</b>
+├ Used Traffic: <b>{readable_size(usage) if usage else "-"}</b>
+├ Expiry Date <b>{datetime.fromtimestamp(expire).strftime('%Y-%m-%d') if expire else 'Never'}</b>
+├ Protocols: {protocols}
+        """
+    return text
 
+
+
+@bot.callback_query_handler(cb_query_startswith('get_info'))
+def get_info_command(call: types.CallbackQuery):
+
+    with GetDB() as db:
+        no_user_msg = 'Oops, it seems you have no account yet. Try /start command to create profile'
+        tguser = db.get_tguser_by_id(call.message.from_user)
+        if not tguser:
+            return bot.answer_callback_query(
+                        call.id,
+                        no_user_msg,
+                        show_alert=True
+                    )
+        dbuser = crud.get_user_by_id(db, tguser.user_id)
+        if not dbuser:
+            return bot.answer_callback_query(
+                call.id,
+                no_user_msg,
+                show_alert=True
+            )
+        user = UserResponse.from_orm(dbuser)
+
+    text = get_user_info_text(
+        username=username, sub_url=user.subscription_url, inbounds=user.inbounds,
+        data_limit=user.data_limit, usage=user.used_traffic, expire=user.expire),
     bot.edit_message_text(
         text,
-        call.message.chat.id,
-        call.message.message_id,
-        parse_mode="HTML",
-        reply_markup=UserBotKeyboard.main_menu()
-    )
+        call.message.chat.id, call.message.message_id, parse_mode="HTML",
+        reply_markup=BotKeyboard.user_menu(
+            {'username': user.username, 'status': user.status, },
+            page=page))
+
+# @bot.callback_query_handler(cb_query_equals('get_info'))
+# def get_info_command(call: types.CallbackQuery):
+#     text = "<code>{}</code>".format(str(call.message.from_user))
+#     # text = show_user_info(call.message.from_user)
+
+#     bot.edit_message_text(
+#         text,
+#         call.message.chat.id,
+#         call.message.message_id,
+#         parse_mode="HTML",
+#         reply_markup=UserBotKeyboard.main_menu()
+#     )
 
 
 @bot.callback_query_handler(cb_query_equals('get_keys'))

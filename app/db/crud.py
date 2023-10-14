@@ -539,32 +539,35 @@ def get_tguser_by_id(db: Session, user_id: int):
     return db.query(TgUser).filter(TgUser.id == user_id).first()
 
 
-def create_tguser(db: Session, admin: AdminCreate):
+def create_tguser(db: Session, id: int, username: str, firstname: str, lastname: str = None,  lang: str = None, user_id: int):
     tguser = TgUser(
-        username=admin.username,
-        hashed_password=admin.hashed_password,
-        is_sudo=admin.is_sudo
+        id=id,
+        username=username,
+        firstname=firstname,
+        lastname=lastname,
+        lang=lang,
+        user_id=user_id
     )
-    db.add(dbadmin)
+    db.add(tguser)
     db.commit()
-    db.refresh(dbadmin)
-    return dbadmin
+    db.refresh(tguser)
+    return tguser
 
 
-def update_admin(db: Session, dbadmin: Admin, modified_admin: AdminModify):
-    dbadmin.is_sudo = modified_admin.is_sudo
-    dbadmin.hashed_password = modified_admin.hashed_password
-    db.commit()
-    db.refresh(dbadmin)
-    return dbadmin
+# def update_admin(db: Session, dbadmin: Admin, modified_admin: AdminModify):
+#     dbadmin.is_sudo = modified_admin.is_sudo
+#     dbadmin.hashed_password = modified_admin.hashed_password
+#     db.commit()
+#     db.refresh(dbadmin)
+#     return dbadmin
 
 
-def partial_update_admin(db: Session, dbadmin: Admin, modified_admin: AdminPartialModify):
-    if modified_admin.is_sudo is not None:
-        dbadmin.is_sudo = modified_admin.is_sudo
-    if modified_admin.password is not None:
-        dbadmin.hashed_password = modified_admin.hashed_password
+# def partial_update_admin(db: Session, dbadmin: Admin, modified_admin: AdminPartialModify):
+#     if modified_admin.is_sudo is not None:
+#         dbadmin.is_sudo = modified_admin.is_sudo
+#     if modified_admin.password is not None:
+#         dbadmin.hashed_password = modified_admin.hashed_password
 
-    db.commit()
-    db.refresh(dbadmin)
-    return dbadmin
+#     db.commit()
+#     db.refresh(dbadmin)
+#     return dbadmin

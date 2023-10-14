@@ -24,18 +24,6 @@ class Admin(Base):
     is_sudo = Column(Boolean, default=False)
 
 
-op.create_table('tg_users',
-                    sa.Column('id', sa.BigInteger(), nullable=False),
-                    sa.Column('username', sa.String(256), nullable=True),
-                    sa.Column('firstname', sa.String(256), nullable=True),
-                    sa.Column('lastname', sa.String(256), nullable=True),
-                    sa.Column('lang', sa.String(8), nullable=True),
-                    sa.Column('created_at', sa.DateTime(), nullable=True),
-                    sa.Column('user_id', sa.Integer(), nullable=True),
-                    sa.PrimaryKeyConstraint('id'),
-                    sa.ForeignKeyConstraint(['user_id'], ['users.id'])
-                    )
-
 class TgUser(Base):
     __tablename__ = "tg_users"
 

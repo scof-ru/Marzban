@@ -1,6 +1,6 @@
 {
     "log": {
-        "loglevel": "info"
+        "loglevel": "debug"
     },
     "inbounds": [
         {
@@ -69,7 +69,7 @@
         {
             "tag": "VLESS TCP REALITY",
             "listen": "0.0.0.0",
-            "port": 8443,
+            "port": 27443,
             "protocol": "vless",
             "settings": {
                 "clients": [],
@@ -190,9 +190,9 @@
             }
         },
         {
-            "tag": "Shadowsocks TCP",
+            "tag": "Shadowsocks",
             "listen": "0.0.0.0",
-            "port": 1080,
+            "port": "27100",
             "protocol": "shadowsocks",
             "settings": {
                 "clients": [],

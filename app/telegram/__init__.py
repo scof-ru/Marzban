@@ -4,12 +4,15 @@ from threading import Thread
 from config import TELEGRAM_API_TOKEN, TELEGRAM_PROXY_URL
 from app import app
 from telebot import TeleBot, apihelper
+from WalletPay import WalletPayAPI
 
 
 bot = None
+wallet_api = None
 if TELEGRAM_API_TOKEN:
     apihelper.proxy = {'http': TELEGRAM_PROXY_URL, 'https': TELEGRAM_PROXY_URL}
     bot = TeleBot(TELEGRAM_API_TOKEN)
+    wallet_api = WalletPayAPI(api_key=TELEGRAM_API_TOKEN)
 
 handler_names = ["admin", "report", "user"]
 
@@ -38,6 +41,7 @@ from .handlers.report import (  # noqa
 
 __all__ = [
     "bot",
+    "wallet_api",
     "report",
     "report_new_user",
     "report_user_modification",

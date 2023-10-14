@@ -107,7 +107,7 @@ def get_info_command(call: types.CallbackQuery):
 
     with GetDB() as db:
         no_user_msg = 'Oops, it seems you have no account yet. Try /start command to create profile'
-        tguser = db.get_tguser_by_id(call.message.from_user)
+        tguser = crud.get_tguser_by_id(db, call.message.from_user)
         if not tguser:
             return bot.answer_callback_query(
                         call.id,

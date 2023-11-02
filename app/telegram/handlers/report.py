@@ -1,5 +1,7 @@
 import datetime
 
+from app.db import GetDB, crud
+
 from app import logger
 from app.telegram import bot
 from telebot.apihelper import ApiTelegramException
@@ -8,6 +10,7 @@ from app.telegram.utils.keyboard import BotKeyboard
 from app.utils.system import readable_size
 from config import TELEGRAM_ADMIN_ID
 from telebot.formatting import escape_html
+from app.telegram.utils.user_bot_messages import UserBotMessages
 
 
 def report(message: str, parse_mode="html", keyboard=None):
@@ -17,8 +20,31 @@ def report(message: str, parse_mode="html", keyboard=None):
         except ApiTelegramException as e:
             logger.error(e)
 
+def report_client(username: str, message: str, parse_mode="html", keyboard=None):
+    id = username.replace("user", "")
+    id = int(id)
+    with GetDB() as db:
+        tguser = crud.get_tguser_by_id(db, id)
+        if tguser:
+            try:
+                bot.send_message(id, message, parse_mode=parse_mode, reply_markup=keyboard)
+            except ApiTelegramException as e:
+                logger.error(e)
 
-def report_new_user(user_id: int, username: str, by: str, expire_date: int, usage: str, proxies: list):
+
+# def report_all_clients(message: str, parse_mode="html", keyboard=None):
+#     id = username.replace("user", "")
+#     id = int(id)
+#     with GetDB() as db:
+#         tguser = crud.get_tguser_active(db)
+#         for user in tguser:
+#             try:
+#                 bot.send_message(tguser.id, message, parse_mode=parse_mode, reply_markup=keyboard)
+#             except ApiTelegramException as e:
+#                 logger.error(e)
+
+
+def report_new_user(user_id: int, username: str, by: str, expire_date: int, usage: str, proxies: list, status: str):
     text = """
 ⨁ New User Added by <b>{by}</b>
 ➖➖➖➖➖➖➖
@@ -44,7 +70,7 @@ def report_new_user(user_id: int, username: str, by: str, expire_date: int, usag
         keyboard=BotKeyboard.user_menu({
             'username': username,
             'id': user_id,
-            'status': 'active'
+            'status': status
         }, with_back=False)
     )
 
@@ -93,4 +119,13 @@ def report_status_change(username: str, status: str):
         username=escape_html(username),
         status=status.capitalize()
     )
-    return report(text)
+    report(text)
+
+    return report_client_status_change(username, status)
+
+def report_client_status_change(username: str, status: str):
+
+    text = UserBotMessages.get_message("USER_STATUS_CHANGE").format(
+        status=status.capitalize()
+    )
+    return report_client(username, text)

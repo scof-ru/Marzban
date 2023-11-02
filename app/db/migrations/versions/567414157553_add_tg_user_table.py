@@ -25,9 +25,10 @@ def upgrade() -> None:
                     sa.Column('lastname', sa.String(256), nullable=True),
                     sa.Column('lang', sa.String(8), nullable=True),
                     sa.Column('created_at', sa.DateTime(), nullable=True),
-                    sa.Column('user_id', sa.Integer(), nullable=True),
+                    sa.Column('active', sa.Boolean(), nullable=False),
+                    sa.Column('referent', sa.BigInteger(), nullable=True),
+                    sa.Column('user_id', sa.Integer(), sa.ForeignKey('users.id', ondelete='CASCADE')),
                     sa.PrimaryKeyConstraint('id'),
-                    sa.ForeignKeyConstraint(['user_id'], ['users.id'])
                     )
     # ### end Alembic commands ###
 

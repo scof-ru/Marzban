@@ -30,10 +30,11 @@ XRAY_ASSETS_PATH = config("XRAY_ASSETS_PATH", default="/usr/local/share/xray")
 XRAY_EXCLUDE_INBOUND_TAGS = config("XRAY_EXCLUDE_INBOUND_TAGS", default='').split()
 XRAY_SUBSCRIPTION_URL_PREFIX = config("XRAY_SUBSCRIPTION_URL_PREFIX", default="").strip("/")
 
-
+TELEGRAM_BOT_URL = config("TELEGRAM_BOT_URL", default="")
 TELEGRAM_API_TOKEN = config("TELEGRAM_API_TOKEN", default=None)
 TELEGRAM_ADMIN_ID = config("TELEGRAM_ADMIN_ID", cast=int, default=0)
 TELEGRAM_PROXY_URL = config("TELEGRAM_PROXY_URL", default=None)
+TELEGRAM_SUPPORT_CHAT_ID = config("TELEGRAM_SUPPORT_CHAT_ID", cast=int, default=0)
 
 JWT_ACCESS_TOKEN_EXPIRE_MINUTES = config("JWT_ACCESS_TOKEN_EXPIRE_MINUTES", cast=int, default=1440)
 

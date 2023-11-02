@@ -15,6 +15,7 @@ from app.models.user import (UserCreate, UserModify, UserResponse, UserStatus,
                              UserStatusModify)
 from app.models.user_template import UserTemplateResponse
 from app.telegram import bot
+from app.telegram.handlers.report import report_client_status_change
 from app.telegram.utils.custom_filters import (cb_query_equals,
                                                cb_query_startswith)
 from app.telegram.utils.keyboard import BotKeyboard
@@ -75,7 +76,7 @@ def cleanup_messages(chat_id: int) -> None:
     mem_store.set("messages_to_delete", [])
 
 
-@bot.message_handler(commands=['start', 'help'], is_admin=True)
+@bot.message_handler(commands=['start', 'menu'], is_admin=True)
 def help_command(message: types.Message):
     return bot.reply_to(message, """
 {user_link} Welcome to Marzban Telegram-Bot Admin Panel.
@@ -835,6 +836,8 @@ def confirm_user_command(call: types.CallbackQuery):
             dbuser = crud.get_user(db, username)
             crud.update_user(db, dbuser, UserModify(
                 status=UserStatusModify.disabled))
+            report_client_status_change(username, UserStatusModify.disabled)
+
             xray.operations.remove_user(dbuser)
         return bot.edit_message_text(
             "✅ User suspended.",
@@ -848,6 +851,7 @@ def confirm_user_command(call: types.CallbackQuery):
             dbuser = crud.get_user(db, username)
             crud.update_user(db, dbuser, UserModify(
                 status=UserStatusModify.active))
+            report_client_status_change(username, UserStatusModify.active)
             xray.operations.add_user(dbuser)
 
         return bot.edit_message_text(

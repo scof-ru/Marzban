@@ -4,6 +4,8 @@ from telebot import types
 from telebot.custom_filters import AdvancedCustomFilter
 
 from config import TELEGRAM_ADMIN_ID
+from config import TELEGRAM_SUPPORT_CHAT_ID
+
 
 
 class IsAdminFilter(AdvancedCustomFilter):
@@ -17,6 +19,16 @@ class IsAdminFilter(AdvancedCustomFilter):
             return message.from_user.id == TELEGRAM_ADMIN_ID
         return message.chat.id == TELEGRAM_ADMIN_ID
 
+class IsTechSupportFilter(AdvancedCustomFilter):
+    key = 'is_techsupport'
+
+    def check(self, message, text):
+        """
+        :meta private:
+        """
+        return message.chat.id == TELEGRAM_SUPPORT_CHAT_ID
+
+
 
 def cb_query_equals(text: str):
     return lambda query: query.data == text
@@ -28,4 +40,6 @@ def cb_query_startswith(text: str):
 
 
 def setup() -> None:
+    bot.add_custom_filter(IsTechSupportFilter())
     bot.add_custom_filter(IsAdminFilter())
+

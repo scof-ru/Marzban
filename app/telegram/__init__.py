@@ -14,7 +14,7 @@ if TELEGRAM_API_TOKEN:
     bot = TeleBot(TELEGRAM_API_TOKEN)
     wallet_api = WalletPayAPI(api_key=TELEGRAM_API_TOKEN)
 
-handler_names = ["admin", "report", "user"]
+handler_names = ["admin", "report", "user", "tech_support"]
 
 @app.on_event("startup")
 def start_bot():

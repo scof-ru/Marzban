@@ -185,7 +185,7 @@ def get_users_count(db: Session, status: UserStatus = None, admin: Admin = None)
     return query.count()
 
 
-def create_user(db: Session, user: UserCreate, admin: Admin = None):
+def create_user(db: Session, user: UserCreate, admin: Admin = None, status: UserStatus = UserStatus.active):
     excluded_inbounds_tags = user.excluded_inbounds
     proxies = []
     for proxy_type, settings in user.proxies.items():
@@ -200,6 +200,7 @@ def create_user(db: Session, user: UserCreate, admin: Admin = None):
 
     dbuser = User(
         username=user.username,
+        status = status,
         proxies=proxies,
         data_limit=(user.data_limit or None),
         expire=(user.expire or None),
@@ -536,17 +537,33 @@ def update_node_status(db: Session, dbnode: Node, status: NodeStatus, message: s
 
 
 def get_tguser_by_id(db: Session, user_id: int):
-    return db.query(TgUser).filter(TgUser.id == user_id).first()
+    return db.query(TgUser).filter(TgUser.active == True).first()
 
 
-def create_tguser(db: Session, id: int,  user_id: int, username: str, firstname: str, lastname: str = None,  lang: str = None):
+def get_tguser_active(db: Session):
+    return db.query(TgUser).filter(TgUser.active == True).all()
+
+
+def update_tguser_active(db: Session, user_id: int, active: bool):
+    tguser = db.query(TgUser).filter(TgUser.id == user_id).first()
+    if (tguser):
+        tguser.active = active
+        db.commit()
+        db.refresh(tguser)
+        return True
+    return False
+
+
+def create_tguser(db: Session, id: int,  user_id: int, firstname: str, username: str = "", lastname: str = "",  lang: str = "", active: bool = False, referent: int = 0):
     tguser = TgUser(
         id=id,
         username=username,
         firstname=firstname,
         lastname=lastname,
         lang=lang,
-        user_id=user_id
+        user_id=user_id,
+        active=active,
+        referent=referent
     )
     db.add(tguser)
     db.commit()

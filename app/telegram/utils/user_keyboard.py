@@ -3,6 +3,7 @@ from itertools import islice
 from typing import Literal, Dict, List
 
 from telebot import types  # noqa
+from app.telegram.utils.user_bot_messages import UserBotMessages
 
 from app import xray
 
@@ -12,16 +13,19 @@ class UserBotKeyboard:
     def main_menu():
         keyboard = types.InlineKeyboardMarkup()
         keyboard.add(
-            types.InlineKeyboardButton(text='♻️ Get Info', callback_data='get_info')
+            types.InlineKeyboardButton(text='ℹ {}'.format(UserBotMessages.get_message("GET_INFO")), callback_data='get_info')
         )
         keyboard.add(
-            types.InlineKeyboardButton(text='➕ Get keys', callback_data='get_keys')
+            types.InlineKeyboardButton(text='🔑 {}'.format(UserBotMessages.get_message("GET_KEYS")), callback_data='get_keys')
         )
         keyboard.add(
-            types.InlineKeyboardButton(text='➕ Change country', callback_data='change_country')
+            types.InlineKeyboardButton(text='🔗 {}'.format(UserBotMessages.get_message("GET_REFERAL")), callback_data='get_referal_link')
         )
+        # keyboard.add(
+        #     types.InlineKeyboardButton(text='➕ Change country', callback_data='change_country')
+        # )
         keyboard.add(
-            types.InlineKeyboardButton(text='♻️ Report problem', callback_data='report')
+            types.InlineKeyboardButton(text='🆘 {}'.format(UserBotMessages.get_message("REPORT_PROBLEMS")), callback_data='techsupport_request')
         )
 
         return keyboard
@@ -38,10 +42,10 @@ class UserBotKeyboard:
             row = []
             for p in user:
                 status = {
-                    'active': '✅',
-                    'expired': '🕰',
-                    'limited': '📵',
-                    'disabled': '❌'
+                    UserBotMessages.get_message("STATUS_ACTIVE"): '✅',
+                    UserBotMessages.get_message("STATUS_EXPIRED"): '🕰',
+                    UserBotMessages.get_message("STATUS_LIMITED"): '📵',
+                    UserBotMessages.get_message("STATUS_DISABLED"): '❌'
                 }
                 row.append(types.InlineKeyboardButton(
                     text=f"{p.username} ({status[p.status]})",

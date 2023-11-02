@@ -32,6 +32,9 @@ class TgUser(Base):
     firstname = Column(String(256), nullable=False)
     lastname = Column(String(256), nullable=True)
     lang = Column(String(8), nullable=True)
+    active = Column(Boolean(), nullable=False)
+    referent = Column(BigInteger, nullable=True)
+
     user_id = Column(Integer,ForeignKey("users.id"))
     created_at = Column(DateTime, default=datetime.utcnow)
     users = relationship("User", back_populates="tguser")
@@ -56,7 +59,7 @@ class User(Base):
     expire = Column(Integer, nullable=True)
     admin_id = Column(Integer, ForeignKey("admins.id"))
     admin = relationship("Admin", back_populates="users")
-    tguser = relationship("TgUser", back_populates="users")
+    tguser = relationship("TgUser", back_populates="users", cascade="all, delete-orphan")
     created_at = Column(DateTime, default=datetime.utcnow)
 
     @property

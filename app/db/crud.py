@@ -536,7 +536,7 @@ def update_node_status(db: Session, dbnode: Node, status: NodeStatus, message: s
     return dbnode
 
 def get_tguser_by_id(db: Session, user_id: int):
-    return db.query(TgUser).filter(TgUser.active == True).filter(TgUser.id == user_id).first()
+    return db.query(TgUser).filter(TgUser.id == user_id).first()
 
 
 def get_tguser_active(db: Session):

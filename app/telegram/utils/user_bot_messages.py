@@ -27,7 +27,7 @@ To get started, use the buttons below.""",
         },
         "USER_DISABLED" : {
             "en": "User status is disabled. Please wait for activating",
-            "ru": "Пользователь не активирован. Пожайлуста дождитесь активации"
+            "ru": "Пользователь не активирован. Пожалуйста дождитесь активации"
         },
         "USER_LIMITED" : {
             "en": "User status is limited or expired. Please request more details in main menu",
@@ -109,6 +109,10 @@ To get started, use the buttons below.""",
             "en": "Use the link below to share among your friends",
             "ru": "Используй ссылку ниже для того, чтобы пригласить друзей"
         }, 
+        "ENTER_SUPPORT_MSG": {
+            "en": "🆘 Enter message for techsupport",
+            "ru": "🆘 Введите сообщение для техподдержки"
+        }
     }
 
     default_lang="ru"

@@ -3,6 +3,7 @@ from telebot import types
 from app.telegram.utils.custom_filters import (cb_query_equals,
                                                cb_query_startswith)
 from app.telegram.utils.user_keyboard import UserBotKeyboard
+from app.telegram.utils.user_bot_messages import UserBotMessages
 
 
 from config import TELEGRAM_SUPPORT_CHAT_ID
@@ -16,7 +17,7 @@ WRONG_REPLY="User above don't allow forward his messages. You must reply to bot 
 def techsupport_command(call: types.CallbackQuery):
     username_msg = bot.send_message(
         call.message.chat.id,
-        '🆘 Enter message for techsupport',
+        UserBotMessages.get_message("ENTER_SUPPORT_MSG")
         # reply_markup=UserBotKeyboard.main_menu()
     )
     #schedule_delete_message(template_msg.message_id)

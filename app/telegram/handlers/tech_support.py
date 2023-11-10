@@ -9,7 +9,7 @@ from app.telegram.utils.user_bot_messages import UserBotMessages
 from config import TELEGRAM_SUPPORT_CHAT_ID
 from app.db import GetDB, crud
 
-
+MESSAGE_FROM="Message from: user"
 REPLY_TO_THIS_MESSAGE="User above don't allow forward his messages. Reply to this message."
 WRONG_REPLY="User above don't allow forward his messages. You must reply to bot reply under user forwarded message."
 
@@ -24,13 +24,17 @@ def techsupport_command(call: types.CallbackQuery):
     bot.register_next_step_handler(username_msg, forward_to_chat)
 
 def forward_to_chat(message: types.Message):
-    print(message)
     forwarded = bot.forward_message(TELEGRAM_SUPPORT_CHAT_ID, message.chat.id, message.message_id)
     if not forwarded.forward_from:
         bot.send_message(
             chat_id=TELEGRAM_SUPPORT_CHAT_ID,
             reply_to_message_id=forwarded.message_id,
-            text=f'{update.message.from_user.id}\n{REPLY_TO_THIS_MESSAGE}'
+            text=f'{message.from_user.id}\n{MESSAGE_FROM}{message.from_user.id}\n{REPLY_TO_THIS_MESSAGE}'
+        )
+    else:
+        bot.send_message(
+            chat_id=TELEGRAM_SUPPORT_CHAT_ID,
+            text=f'{MESSAGE_FROM}{message.from_user.id}'
         )
     # TODO: Show notification, that message will be processed soon
 

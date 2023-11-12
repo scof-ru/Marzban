@@ -57,6 +57,10 @@ To get started, use the buttons below.""",
             "en":"Get keys",
             "ru": "Получить ключи"
         },
+        "TUTORIAL" : {
+            "en": "Tutorial",
+            "ru": "Инструкция"
+        },
         "REPORT_PROBLEMS" : {
             "en":"Report problems",
             "ru": "Написать в тех. поддержку"
@@ -112,7 +116,59 @@ To get started, use the buttons below.""",
         "ENTER_SUPPORT_MSG": {
             "en": "🆘 Enter message for techsupport",
             "ru": "🆘 Введите сообщение для техподдержки"
-        }
+        },
+        "TUTORIAL_DESCRIPTION" : {
+            "en": f""" 
+<b>Quick guide:</b>
+\t1. Wait for user activation
+\t2. When it happen - download the keys
+\t3. Install one the application below, according you operating system
+\t4. Import downloaded key to the application by copying text or scanning QR
+
+<b>Applications:</b>
+Android - <a href="https://play.google.com/store/apps/details?id=com.v2ray.ang">v2rayng</a>
+iOS/MacOS - <a href="https://apps.apple.com/us/app/foxray/id6448898396">foxray</a>
+Linux - <a href="https://github.com/MatsuriDayo/nekoray/releases/download/3.24/nekoray-3.24-2023-10-28-debian-x64.deb">Nekoray.deb</a>\t <a href="https://github.com/MatsuriDayo/nekoray/releases/download/3.24/nekoray-3.24-2023-10-28-debian-x64.deb">Nekoray.AppImage</a>
+Windows - <a href="https://github.com/MatsuriDayo/nekoray/releases/download/3.24/nekoray-3.24-2023-10-28-windows64.zip">Nekoray</a>
+\n\n""",
+            "ru": f""" 
+<b>Инструкция:</b>
+\t1. Дождитесь активации пользователя
+\t2. Когда пользователь будет активирован - скачайте ключ
+\t3. Скачайте приложение по одной из ссылок ниже
+\t4. Импортируйте ключ в приложение скопировав ключ или по QR коду
+
+<b>Приложения:</b>
+Android - <a href="https://play.google.com/store/apps/details?id=com.v2ray.ang">v2rayng</a>
+iOS/MacOS - <a href="https://apps.apple.com/us/app/foxray/id6448898396">foxray</a>
+Linux - <a href="https://github.com/MatsuriDayo/nekoray/releases/download/3.24/nekoray-3.24-2023-10-28-debian-x64.deb">Nekoray.deb</a>\t <a href="https://github.com/MatsuriDayo/nekoray/releases/download/3.24/nekoray-3.24-2023-10-28-debian-x64.deb">Nekoray.AppImage</a>
+Windows - <a href="https://github.com/MatsuriDayo/nekoray/releases/download/3.24/nekoray-3.24-2023-10-28-windows64.zip">Nekoray</a>
+\n\n"""
+        },
+        "TERMS_OF_USE_LABEL" : {
+                "en": "Terms of use",
+                "ru": "Правила пользования"
+        },
+        "TERMS_OF_USE" : {
+            "en": f""" 
+<b>Terms of use:</b>
+1. Bot is available only by invitation
+2. Invite only trusted friends (who is not relate to censorship organizations)
+3. Use proxy only when you really need it. You shouldn't use it 24/7 for safety reasons
+4. The keys might be used on several devices (up to 5 devices)
+5. It's forbiden to download torrents over proxy
+6. If you find bug or has any problem - please report it to techsupport
+""",
+            "ru": f""" 
+<b>Правила использования:</b>
+1. Доступ к боту возможен только по приглашению. 
+2. Приглашайте только проверенных людей (которые не имеют отношения к гос. организациям, особенно к РКН)
+3. Пользуйтесь по мере необходимости. Не нужно использовать в режиме 24/7 (т.к. часть веб ресурсов РФ не доступна вне РФ)
+4. Ключи можно использовать на нескольких девайсах (до 5 штук)
+5. Нельзя качать торренты
+6. Если обнаружили ошибку или проблему - пишите в тех. поддержку
+"""
+    }
     }
 
     default_lang="ru"

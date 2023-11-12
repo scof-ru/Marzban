@@ -25,6 +25,12 @@ class UserBotKeyboard:
         #     types.InlineKeyboardButton(text='➕ Change country', callback_data='change_country')
         # )
         keyboard.add(
+            types.InlineKeyboardButton(text='📑 {}'.format(UserBotMessages.get_message("TUTORIAL")), callback_data='tutorial_request')
+        )
+        keyboard.add(
+            types.InlineKeyboardButton(text='📝 {}'.format(UserBotMessages.get_message("TERMS_OF_USE_LABEL")), callback_data='terms_of_use')
+        )
+        keyboard.add(
             types.InlineKeyboardButton(text='🆘 {}'.format(UserBotMessages.get_message("REPORT_PROBLEMS")), callback_data='techsupport_request')
         )
 

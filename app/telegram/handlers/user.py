@@ -30,6 +30,13 @@ from config import TELEGRAM_BOT_URL, TELEGRAM_ADMIN_ID
 bot.add_custom_filter(ChatFilter())
 
 
+def edit_message(call, text):
+    bot.edit_message_text(
+        text,
+        call.message.chat.id, call.message.message_id, parse_mode="HTML",
+        reply_markup=UserBotKeyboard.main_menu())
+
+
 def create_order(user_id):
     return wallet_api.create_order(
         amount=100,
@@ -53,7 +60,9 @@ def usage_command(message):
 
 
 def add_new_user(from_user, referent):
-    inbounds={"shadowsocks": ["Shadowsocks"], "vless": ["VLESS TCP REALITY"]}
+    # inbounds={"shadowsocks": ["Shadowsocks"], "vless": ["VLESS TCP REALITY"]}
+    inbounds={"vless": ["VLESS TCP REALITY"]}
+
     new_user = UserCreate(
         username="user" + str(from_user.id),
         expire=None,
@@ -113,7 +122,7 @@ def start_command(message: types.Message):
             response = """
 {user_link} {welcome_msg}
 """.format(user_link=user_link(message.from_user), welcome_msg=UserBotMessages.get_message("WELCOME_MSG"))
-        else:
+        elif (not tguser.active):
             crud.update_tguser_active(db, message.from_user.id, True)
 
     return bot.reply_to(message,  response, parse_mode="html", reply_markup=UserBotKeyboard.main_menu())
@@ -145,51 +154,44 @@ def get_info_command(call: types.CallbackQuery):
     with GetDB() as db:
         tguser = crud.get_tguser_by_id(db, call.from_user.id)
         if not tguser:
-            return bot.answer_callback_query(
-                        call.id,
-                        UserBotMessages.get_message("NO_ACCOUNT"),
-                        show_alert=True
+            return edit_message(
+                        call,
+                        UserBotMessages.get_message("NO_ACCOUNT")
                     )
         dbuser = crud.get_user_by_id(db, tguser.user_id)
         if not dbuser:
-            return bot.answer_callback_query(
-                call.id,
-                UserBotMessages.get_message("NO_USER"),
-                show_alert=True
+            return edit_message(
+                call,
+                UserBotMessages.get_message("NO_USER")
             )
         user = UserResponse.from_orm(dbuser)
-
     text = get_user_info_text(
         username=user.username, inbounds=user.inbounds,
-        data_limit=user.data_limit, usage=user.used_traffic, expire=user.expire, status=user.status),
-    bot.edit_message_text(
-        text,
-        call.message.chat.id, call.message.message_id, parse_mode="HTML",
-        reply_markup=UserBotKeyboard.main_menu())
+        data_limit=user.data_limit, usage=user.used_traffic, expire=user.expire, status=user.status)
+    edit_message(call, text)
 
 @bot.callback_query_handler(cb_query_equals('get_keys'))
 def get_keys_command(call: types.CallbackQuery):
     with GetDB() as db:
         tguser = crud.get_tguser_by_id(db, call.from_user.id)
         if not tguser:
-            return bot.answer_callback_query(
-                        call.id,
-                        UserBotMessages.get_message("NO_ACCOUNT"),
-                        show_alert=True
+            return edit_message(
+                        call,
+                        UserBotMessages.get_message("NO_ACCOUNT")
                     )
         dbuser = crud.get_user_by_id(db, tguser.user_id)
         if not dbuser:
-            return bot.answer_callback_query(call.id, UserBotMessages.get_message("NO_USER"), show_alert=True)
+            return edit_message(call, UserBotMessages.get_message("NO_USER"))
 
         user = UserResponse.from_orm(dbuser)
 
         if (user.status == UserStatus.disabled):
-            return bot.answer_callback_query(call.id, UserBotMessages.get_message("USER_DISABLED"), show_alert=True)
+            return edit_message(call, UserBotMessages.get_message("USER_DISABLED"))
 
         if (user.status == UserStatus.limited):
-            return bot.answer_callback_query(call.id, UserBotMessages.get_message("USER_LIMITED"), show_alert=True)
+            return edit_message(call, UserBotMessages.get_message("USER_LIMITED"))
 
-    bot.answer_callback_query(call.id, UserBotMessages.get_message("GENERATING_QR"))
+    edit_message(call, UserBotMessages.get_message("GENERATING_QR"))
 
     for link in user.links:
         f = io.BytesIO()
@@ -217,6 +219,33 @@ def change_country_command(call: types.CallbackQuery):
         call.message.message_id,
         parse_mode="HTML",
         reply_markup=UserBotKeyboard.main_menu()
+    )
+
+
+@bot.callback_query_handler(cb_query_equals('tutorial_request'))
+def tutorial_command(call: types.CallbackQuery):
+    text = UserBotMessages.get_message("TUTORIAL_DESCRIPTION")
+
+    bot.edit_message_text(
+        text,
+        call.message.chat.id,
+        call.message.message_id,
+        parse_mode="HTML",
+        reply_markup=UserBotKeyboard.main_menu(),
+        disable_web_page_preview=True
+    )
+
+@bot.callback_query_handler(cb_query_equals('terms_of_use'))
+def terms_of_use_command(call: types.CallbackQuery):
+    text = UserBotMessages.get_message("TERMS_OF_USE")
+
+    bot.edit_message_text(
+        text,
+        call.message.chat.id,
+        call.message.message_id,
+        parse_mode="HTML",
+        reply_markup=UserBotKeyboard.main_menu(),
+        disable_web_page_preview=True
     )
 
 @bot.callback_query_handler(cb_query_equals('get_referal_link'))

@@ -30,6 +30,7 @@ def upgrade() -> None:
                     sa.Column('user_id', sa.Integer(), sa.ForeignKey('users.id', ondelete='CASCADE')),
                     sa.PrimaryKeyConstraint('id'),
                     )
+    op.execute('SET NAMES utf8')
     # ### end Alembic commands ###
 
 

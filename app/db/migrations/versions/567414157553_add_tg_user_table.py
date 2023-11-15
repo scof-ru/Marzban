@@ -30,7 +30,7 @@ def upgrade() -> None:
                     sa.Column('user_id', sa.Integer(), sa.ForeignKey('users.id', ondelete='CASCADE')),
                     sa.PrimaryKeyConstraint('id'),
                     )
-    op.execute('SET NAMES utf8mb4')
+    op.execute('ALTER TABLE tg_users CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci')
     # ### end Alembic commands ###
 
 

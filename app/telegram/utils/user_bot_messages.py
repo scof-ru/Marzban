@@ -12,6 +12,10 @@ To get started, use the buttons below.""",
             "ru": """Добро пожаловать в Wall Breaker bot. Здесь ты можешь управлять своим аккаунтом.
 Используй кнопки ниже"""
         },
+        "USER_ADD_ERROR" : {
+            "en":"Can't create your account. Please write to techsupport",
+            "ru": "Не получилось создать профиль пользователя. Обратись в тех. поддержку"
+        },
         "NO_ACCOUNT" : {
             "en":"Oops, it seems you have no account yet. Try /start command to create profile",
             "ru": "Упс. Кажется твой аккаунт еще не создан. Попробуй использовать команду /start для создания профиля"
@@ -19,7 +23,6 @@ To get started, use the buttons below.""",
         "SIGNOFF_SUCCESFULL": {
             "en": "Successfully signed off. To resume the subscription use /start command",
             "ru": "Вы были успешно отписаны. Чтобы возобновить подписку воспользуйтесь командой /start"
-
         },
         "NO_USER" : {
             "en":"It seems your profile has been deleted or not created. Please write to tech support",

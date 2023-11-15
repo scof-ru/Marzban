@@ -118,10 +118,13 @@ def start_command(message: types.Message):
                 return bot.reply_to(message, escape_markdown(UserBotMessages.get_message("AVAILABLE_BY_INVITATION")), parse_mode='MarkdownV2')
             elif (not crud.get_tguser_by_id(db, referent) and referent != TELEGRAM_ADMIN_ID):
                 return bot.reply_to(message, escape_markdown(UserBotMessages.get_message("AVAILABLE_BY_INVITATION")), parse_mode='MarkdownV2')
-            add_new_user(message.from_user, referent)
-            response = """
+            result = add_new_user(message.from_user, referent)
+            if result:
+                response = """
 {user_link} {welcome_msg}
 """.format(user_link=user_link(message.from_user), welcome_msg=UserBotMessages.get_message("WELCOME_MSG"))
+            else:
+                response = UserBotMessages.get_message("USER_ADD_ERROR")
         elif (not tguser.active):
             crud.update_tguser_active(db, message.from_user.id, True)
 

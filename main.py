@@ -23,7 +23,7 @@ if __name__ == "__main__":
             ssl_keyfile=UVICORN_SSL_KEYFILE,
             workers=1,
             reload=DEBUG,
-            log_level=logging.DEBUG if DEBUG else logging.INFO
+            log_level=logging.DEBUG if DEBUG else logging.WARNING
         )
     except FileNotFoundError:  # to prevent error on removing unix sock
         pass

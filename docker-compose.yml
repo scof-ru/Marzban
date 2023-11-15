@@ -4,5 +4,9 @@ services:
     restart: always
     env_file: .env
     network_mode: host
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "512m"
     volumes:
       - /var/lib/marzban:/var/lib/marzban

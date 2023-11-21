@@ -69,7 +69,7 @@
         {
             "tag": "VLESS TCP REALITY",
             "listen": "0.0.0.0",
-            "port": 443,
+            "port": 27443,
             "protocol": "vless",
             "settings": {
                 "clients": [],
@@ -192,7 +192,7 @@
         {
             "tag": "Shadowsocks",
             "listen": "0.0.0.0",
-            "port": "27100",
+            "port": 27100,
             "protocol": "shadowsocks",
             "settings": {
                 "clients": [],

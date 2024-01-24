@@ -40,6 +40,21 @@ class TgUser(Base):
     users = relationship("User", back_populates="tguser")
 
 
+class PayTransactions(Base):
+    __tablename__ = "pay_transactions"
+
+    uuid = Column('uuid', sa.BigInteger(), nullable=False)
+    amount = Column(Integer(), nullable=False)
+    description = Column(String(), nullable=False)
+    status = Column(String(), nullable=False)
+    subscription = Column(String(), nullable=False)
+    submonth = Column(String(), nullable=False)
+    created_at = Column(DateTime(), nullable=False)
+    modified_at = Column(DateTime(), nullable=False)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    user = relationship("User", back_populates="payments")
+
+
 class User(Base):
     __tablename__ = "users"
 
@@ -60,6 +75,7 @@ class User(Base):
     admin_id = Column(Integer, ForeignKey("admins.id"))
     admin = relationship("Admin", back_populates="users")
     tguser = relationship("TgUser", back_populates="users", cascade="all, delete-orphan")
+    payments = relationship("PayTransactions", back_populates="user", cascade="all, delete-orphan")
     created_at = Column(DateTime, default=datetime.utcnow)
 
     @property
@@ -243,6 +259,7 @@ class NodeUserUsage(Base):
     node_id = Column(Integer, ForeignKey("nodes.id"))
     node = relationship("Node", back_populates="user_usages")
     used_traffic = Column(BigInteger, default=0)
+
 
 class NodeUsage(Base):
     __tablename__ = "node_usages"

@@ -3,6 +3,7 @@ from datetime import datetime
 from app import logger, scheduler, xray
 from app.db import crud, GetDB, get_users
 from app.models.user import UserDataLimitResetStrategy, UserStatus
+from app.utils import report
 
 reset_strategy_to_days = {
     UserDataLimitResetStrategy.day.value: 1,
@@ -27,10 +28,12 @@ def reset_user_data_usage():
             if not (now - last_reset_time).days >= num_days_to_reset:
                 continue
 
-            crud.reset_user_data_usage(db, user)
+            dbuser = crud.reset_user_data_usage(db, user)
             # make user active if limited on usage reset
             if user.status == UserStatus.limited:
                 xray.operations.add_user(user)
+                report.status_change(user.username, dbuser.status)
+
 
             logger.info(f"User data usage reset for User \"{user.username}\"")
 

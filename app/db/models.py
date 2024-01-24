@@ -43,14 +43,14 @@ class TgUser(Base):
 class PayTransactions(Base):
     __tablename__ = "pay_transactions"
 
-    uuid = Column('uuid', sa.BigInteger(), nullable=False)
-    amount = Column(Integer(), nullable=False)
-    description = Column(String(), nullable=False)
-    status = Column(String(), nullable=False)
-    subscription = Column(String(), nullable=False)
-    submonth = Column(String(), nullable=False)
-    created_at = Column(DateTime(), nullable=False)
-    modified_at = Column(DateTime(), nullable=False)
+    uuid = Column(BigInteger, primary_key=True, index=True)
+    amount = Column(Integer, nullable=False)
+    description = Column(String(256), nullable=False)
+    status = Column(String(256), nullable=False)
+    subscription = Column(String(256), nullable=False)
+    submonth = Column(String(256), nullable=False)
+    created_at = Column(DateTime, nullable=False)
+    modified_at = Column(DateTime, nullable=False)
     user_id = Column(Integer, ForeignKey("users.id"))
     user = relationship("User", back_populates="payments")
 
@@ -76,6 +76,7 @@ class User(Base):
     admin = relationship("Admin", back_populates="users")
     tguser = relationship("TgUser", back_populates="users", cascade="all, delete-orphan")
     payments = relationship("PayTransactions", back_populates="user", cascade="all, delete-orphan")
+    node_users = relationship("NodeUser", back_populates="user", cascade="all, delete-orphan")
     created_at = Column(DateTime, default=datetime.utcnow)
 
     @property
@@ -259,6 +260,20 @@ class NodeUserUsage(Base):
     node_id = Column(Integer, ForeignKey("nodes.id"))
     node = relationship("Node", back_populates="user_usages")
     used_traffic = Column(BigInteger, default=0)
+
+
+class NodeUser(Base):
+    __tablename__ = "node_user"
+    __table_args__ = (
+        UniqueConstraint('user_id', 'node_id'),
+    )
+
+    id = Column(Integer, primary_key=True, index=True)
+    created_at = Column(DateTime, unique=False, nullable=False) # one hour per record
+    user_id = Column(Integer, ForeignKey("users.id"))
+    user = relationship("User", back_populates="node_usages")
+    node_id = Column(Integer, ForeignKey("nodes.id"))
+    node = relationship("Node", back_populates="user_usages")
 
 
 class NodeUsage(Base):

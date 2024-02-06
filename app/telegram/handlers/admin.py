@@ -22,6 +22,8 @@ from app.telegram.utils.keyboard import BotKeyboard
 from app.utils.store import MemoryStorage
 from app.utils.system import cpu_usage, memory_usage, readable_size
 
+from app.db.models import Node
+
 mem_store = MemoryStorage()
 
 
@@ -136,14 +138,37 @@ def suspend_user_command(call: types.CallbackQuery):
 
 @bot.callback_query_handler(cb_query_startswith("activate:"), is_admin=True)
 def activate_user_command(call: types.CallbackQuery):
-    username = call.data.split(":")[1]
+    _, username, node = call.data.split(":")
     bot.edit_message_text(
         f"⚠️ Are you sure? This will activate user `{username}`.",
         call.message.chat.id,
         call.message.message_id,
         parse_mode="markdown",
         reply_markup=BotKeyboard.confirm_action(
-            action="activate", username=username),
+            action="activate", username=username, node=node),
+    )
+
+
+@bot.callback_query_handler(cb_query_startswith("change_node:"), is_admin=True)
+def activate_user_nodes(call: types.CallbackQuery):
+    username = call.data.split(":")[1]
+
+    with GetDB() as db:
+        nodes = crud.get_nodes(db)
+        text = """💻 Nodes:
+✅ Connected
+⏳ Conencting
+❌ Error
+❌ Disabled
+"""
+
+    bot.edit_message_text(
+        text,
+        call.message.chat.id,
+        call.message.message_id,
+        parse_mode="HTML",
+        reply_markup=BotKeyboard.node_list(
+            nodes, username)
     )
 
 
@@ -347,9 +372,30 @@ def users_command(call: types.CallbackQuery):
     )
 
 
+@bot.callback_query_handler(cb_query_startswith('nodes:'), is_admin=True)
+def nodes_command(call: types.CallbackQuery):
+    with GetDB() as db:
+        nodes = crud.get_nodes(db)
+        text = """💻 Nodes:
+✅ Connected
+❌ Conencting
+❌ Error
+❌ Disabled
+"""
+
+    bot.edit_message_text(
+        text,
+        call.message.chat.id,
+        call.message.message_id,
+        parse_mode="HTML",
+        reply_markup=BotKeyboard.node_list(
+            nodes)
+    )
+
+
 def get_user_info_text(
         username: str, sub_url: str, inbounds: dict, data_limit: int | None = None, usage: int | None = None, expire: int |
-        None = None) -> str:
+        None = None, node_name: str | None = None) -> str:
     protocols = ""
     for p, inbounds in inbounds.items():
         protocols += f"\n├─ <b>{p.upper()}</b>\n"
@@ -359,6 +405,7 @@ def get_user_info_text(
 ┌ Username: <b>{username}</b>
 ├ Usage Limit: <b>{readable_size(data_limit) if data_limit else 'Unlimited'}</b>
 ├ Used Traffic: <b>{readable_size(usage) if usage else "-"}</b>
+├ Node: <b> {node_name if node_name else "-"} </b>
 ├ Expiry Date <b>{datetime.fromtimestamp(expire).strftime('%Y-%m-%d') if expire else 'Never'}</b>
 ├ Protocols: {protocols}
 └ Subscription URL: <code>{sub_url}</code>
@@ -397,10 +444,14 @@ def user_command(call: types.CallbackQuery):
                 show_alert=True
             )
         user = UserResponse.from_orm(dbuser)
-
+        node_name = None
+        if (dbuser.node_user):
+            node = crud.get_node_by_id(db, dbuser.node_user[0].node_id)
+            if (node):
+                node_name = node.name
     text = get_user_info_text(
         username=username, sub_url=user.subscription_url, inbounds=user.inbounds,
-        data_limit=user.data_limit, usage=user.used_traffic, expire=user.expire),
+        data_limit=user.data_limit, usage=user.used_traffic, expire=user.expire, node_name=node_name),
     bot.edit_message_text(
         text,
         call.message.chat.id, call.message.message_id, parse_mode="HTML",
@@ -846,12 +897,17 @@ def confirm_user_command(call: types.CallbackQuery):
             reply_markup=BotKeyboard.main_menu()
         )
     elif data == "activate":
-        username = call.data.split(":")[2]
+        _, _, username, node = call.data.split(":")
         with GetDB() as db:
             dbuser = crud.get_user(db, username)
-            crud.update_user(db, dbuser, UserModify(
-                status=UserStatusModify.active))
-            report_client_status_change(username, UserStatusModify.active)
+            if (dbuser.node_user):
+                crud.update_user_node(db, dbuser, node)
+            else:
+                crud.create_user_node(db, dbuser, node)
+            if (dbuser.status != UserStatusModify.active):
+                crud.update_user(db, dbuser, UserModify(
+                    status=UserStatusModify.active))
+                report_client_status_change(username, UserStatusModify.active)
             xray.operations.add_user(dbuser)
 
         return bot.edit_message_text(
@@ -920,6 +976,11 @@ def confirm_user_command(call: types.CallbackQuery):
             proxies = db_user.proxies
 
             user = UserResponse.from_orm(db_user)
+            node_name = None
+            if (db_user.node_user):
+                node = get_node_by_id(db_user.node_user.node_id)
+                if (node):
+                    node_name = node.name
 
         if user.status == UserStatus.active:
             xray.operations.update_user(db_user)
@@ -932,7 +993,8 @@ def confirm_user_command(call: types.CallbackQuery):
                                   inbounds=user.inbounds,
                                   data_limit=user.data_limit,
                                   usage=user.used_traffic,
-                                  expire=user.expire
+                                  expire=user.expire,
+                                  node_name=node_name
                                   )
         bot.edit_message_text(
             text,
@@ -991,6 +1053,11 @@ def confirm_user_command(call: types.CallbackQuery):
                 db_user = crud.create_user(db, new_user)
                 proxies = db_user.proxies
                 user = UserResponse.from_orm(db_user)
+                node_name = None
+                if (db_user.node_user):
+                    node = get_node_by_id(db_user.node_user.node_id)
+                    if (node):
+                        node_name = node.name
         except sqlalchemy.exc.IntegrityError:
             db.rollback()
             return bot.answer_callback_query(
@@ -1006,7 +1073,8 @@ def confirm_user_command(call: types.CallbackQuery):
                                                                 inbounds=user.inbounds,
                                                                 data_limit=user.data_limit,
                                                                 usage=user.used_traffic,
-                                                                expire=user.expire
+                                                                expire=user.expire,
+                                                                node_name=node
                                                                 )
         bot.edit_message_text(
             text,

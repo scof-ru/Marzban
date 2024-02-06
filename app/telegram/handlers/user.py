@@ -7,6 +7,7 @@ from app.telegram.utils.custom_filters import (cb_query_equals,
                                                cb_query_startswith)
 from app.telegram.utils.user_bot_messages import UserBotMessages
 from telebot.formatting import escape_markdown
+from sqlalchemy.orm import Session
 
 
 from telebot import types
@@ -46,6 +47,19 @@ def create_order(user_id):
         timeout_seconds=3600,
         customer_telegram_user_id=user_id
     )
+
+
+def get_dbuser(call: types.CallbackQuery, db: Session):
+    tguser = crud.get_tguser_by_id(db, call.from_user.id)
+    if not tguser:
+        return edit_message(
+                    call,
+                    UserBotMessages.get_message("NO_ACCOUNT"))
+
+    dbuser = crud.get_user_by_id(db, tguser.user_id)
+    if not dbuser:
+        return edit_message(call, UserBotMessages.get_message("NO_USER"))
+    return dbuser
 
 
 @bot.message_handler(commands=['echo'])
@@ -155,18 +169,7 @@ def get_user_info_text(
 @bot.callback_query_handler(cb_query_startswith('get_info'))
 def get_info_command(call: types.CallbackQuery):
     with GetDB() as db:
-        tguser = crud.get_tguser_by_id(db, call.from_user.id)
-        if not tguser:
-            return edit_message(
-                        call,
-                        UserBotMessages.get_message("NO_ACCOUNT")
-                    )
-        dbuser = crud.get_user_by_id(db, tguser.user_id)
-        if not dbuser:
-            return edit_message(
-                call,
-                UserBotMessages.get_message("NO_USER")
-            )
+        dbuser = get_dbuser(call, db)
         user = UserResponse.from_orm(dbuser)
     text = get_user_info_text(
         username=user.username, inbounds=user.inbounds,
@@ -176,16 +179,7 @@ def get_info_command(call: types.CallbackQuery):
 @bot.callback_query_handler(cb_query_equals('get_keys'))
 def get_keys_command(call: types.CallbackQuery):
     with GetDB() as db:
-        tguser = crud.get_tguser_by_id(db, call.from_user.id)
-        if not tguser:
-            return edit_message(
-                        call,
-                        UserBotMessages.get_message("NO_ACCOUNT")
-                    )
-        dbuser = crud.get_user_by_id(db, tguser.user_id)
-        if not dbuser:
-            return edit_message(call, UserBotMessages.get_message("NO_USER"))
-
+        dbuser = get_dbuser(call, db)
         user = UserResponse.from_orm(dbuser)
 
         if (user.status == UserStatus.disabled):
@@ -212,12 +206,41 @@ def get_keys_command(call: types.CallbackQuery):
     return bot.send_message(call.message.chat.id, UserBotMessages.get_message("MAIN_MENU"), parse_mode="html", reply_markup=UserBotKeyboard.main_menu())
 
 
-@bot.callback_query_handler(cb_query_equals('change_country'))
-def change_country_command(call: types.CallbackQuery):
-    text = f"<code>change_country_command</code>\n\n"
-
+@bot.callback_query_handler(cb_query_equals('show_server'))
+def show_server_command(call: types.CallbackQuery):
+    with GetDB() as db:
+        dbuser = get_dbuser(call, db)
+        nodes = crud.get_nodes(db)
+        text = """💻 Servers:"""
+        node_name = None
+        node = dbuser.node_user
+        if (node and dbuser.node_user[0].node):
+            node_name = dbuser.node_user[0].node.name
     bot.edit_message_text(
         text,
+        call.message.chat.id,
+        call.message.message_id,
+        parse_mode="HTML",
+        reply_markup=UserBotKeyboard.node_list(
+            nodes, node_name)
+    )
+
+
+@bot.callback_query_handler(cb_query_startswith("change_server:"))
+def change_server(call: types.CallbackQuery):
+    server = call.data.split(":")[1]
+
+    with GetDB() as db:
+        dbuser = get_dbuser(call, db)
+        if (dbuser.node_user):
+            crud.update_user_node(db, dbuser, server)
+        else:
+            crud.create_user_node(db, dbuser, server)
+
+        xray.operations.add_user(dbuser)
+
+    bot.edit_message_text(
+        UserBotMessages.get_message("SERVER_CHANGED"),
         call.message.chat.id,
         call.message.message_id,
         parse_mode="HTML",
@@ -260,15 +283,14 @@ def get_referal_link_command(call: types.CallbackQuery):
     return bot.send_message(call.message.chat.id, escape_markdown(text), parse_mode="MarkdownV2", reply_markup=UserBotKeyboard.main_menu())
 
 
+@bot.callback_query_handler(cb_query_equals('cancel'))
+def cancel_command(call: types.CallbackQuery):
 
-@bot.callback_query_handler(cb_query_equals('report'))
-def report_command(call: types.CallbackQuery):
-    text = f"<code>report_command</code>\n\n"
-
-    bot.edit_message_text(
-        text,
+    return bot.edit_message_text(
+        UserBotMessages.get_message("MAIN_MENU"),
         call.message.chat.id,
         call.message.message_id,
-        parse_mode="HTML",
+        parse_mode="MarkdownV2",
         reply_markup=UserBotKeyboard.main_menu()
     )
+

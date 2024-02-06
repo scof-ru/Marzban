@@ -27,6 +27,9 @@ class BotKeyboard:
             types.InlineKeyboardButton(text='👥 Users', callback_data='users:1')
         )
         keyboard.add(
+            types.InlineKeyboardButton(text='💻 Nodes', callback_data='nodes:1')
+        )
+        keyboard.add(
             types.InlineKeyboardButton(text='➕ Create User', callback_data='add_user')
         )
         keyboard.add(
@@ -71,13 +74,20 @@ class BotKeyboard:
         keyboard.add(
             types.InlineKeyboardButton(
                 text='Suspend User' if user_info['status'] == 'active' else 'Activate User',
-                callback_data=f"{'suspend' if user_info['status'] == 'active' else 'activate'}:{user_info['username']}"
+                callback_data=f"{'suspend' if user_info['status'] == 'active' else 'change_node'}:{user_info['username']}"
             ),
             types.InlineKeyboardButton(
                 text='Delete User',
                 callback_data=f"delete:{user_info['username']}"
             ),
         )
+        keyboard.add(
+            types.InlineKeyboardButton(
+                text='Change server',
+                callback_data=f"change_node:{user_info['username']}"
+            )
+        )
+
         keyboard.add(
             types.InlineKeyboardButton(
                 text='Show Links',
@@ -118,12 +128,12 @@ class BotKeyboard:
         return keyboard
 
     @staticmethod
-    def confirm_action(action: str, username: str = None):
+    def confirm_action(action: str, username: str = None, node: str = None):
         keyboard = types.InlineKeyboardMarkup()
         keyboard.add(
             types.InlineKeyboardButton(
                 text='Yes',
-                callback_data=f"confirm:{action}:{username}"
+                callback_data=f"confirm:{action}:{username}:{node}"
             ),
             types.InlineKeyboardButton(
                 text='No',
@@ -149,6 +159,40 @@ class BotKeyboard:
             types.InlineKeyboardButton(
                 text="Cancel",
                 callback_data=callback_data
+            )
+        )
+        return keyboard
+
+    @staticmethod
+    def node_list(nodes: list, username: str = None):
+        keyboard = types.InlineKeyboardMarkup()
+        if len(nodes) >= 2:
+            nodes = [p for p in nodes]
+            nodes = [nodes[i:i + 2] for i in range(0, len(nodes), 2)]
+        else:
+            nodes = [nodes]
+        for node in nodes:
+            row = []
+            for p in node:
+                status = {
+                    'connected': '✅',
+                    'connecting': '❌',
+                    'error': '❌',
+                    'disabled': '❌'
+                }
+                callback_data=f'nothing'
+                if (username):
+                    callback_data=f'activate:{username}:{p.name}'
+                row.append(types.InlineKeyboardButton(
+                    text=f"{p.name} ({status[p.status]})",
+                    callback_data=callback_data
+                ))
+            keyboard.row(*row)
+
+        keyboard.add(
+            types.InlineKeyboardButton(
+                text='Back',
+                callback_data='cancel'
             )
         )
         return keyboard

@@ -23,6 +23,7 @@ def upgrade() -> None:
                     sa.Column('amount', sa.Integer(), nullable=False),
                     sa.Column('description', sa.String(256), nullable=False),
                     sa.Column('status', sa.String(256), nullable=False),
+                    sa.Column('submonth', sa.String(256), nullable=False),
                     sa.Column('subscription', sa.String(256), nullable=False),
                     sa.Column('created_at', sa.DateTime(), nullable=False),
                     sa.Column('modified_at', sa.DateTime(), nullable=False),

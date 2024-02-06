@@ -1,8 +1,8 @@
-"""empty message
+"""Add node user
 
-Revision ID: ece13c4c6f65
-Revises: d02dcfbf1517, b3378dc6de01
-Create Date: 2023-02-23 14:55:19.953972
+Revision ID: 6932f008c06d
+Revises: 84938f04bc17
+Create Date: 2024-01-24 11:47:45.442760
 
 """
 from alembic import op
@@ -10,8 +10,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'ece13c4c6f65'
-down_revision = ('d02dcfbf1517', 'b3378dc6de01')
+revision = '6932f008c06d'
+down_revision = '84938f04bc17'
 branch_labels = None
 depends_on = None
 
@@ -22,6 +22,7 @@ def upgrade() -> None:
         sa.Column('id', sa.Integer(), nullable=False),
         sa.Column('user_id', sa.Integer(), nullable=True),
         sa.Column('node_id', sa.Integer(), nullable=True),
+        sa.Column('created_at', sa.DateTime(), nullable=True),
         sa.ForeignKeyConstraint(['node_id'], ['nodes.id'], ),
         sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
         sa.PrimaryKeyConstraint('id'),

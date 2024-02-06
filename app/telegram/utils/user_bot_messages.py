@@ -120,6 +120,14 @@ To get started, use the buttons below.""",
             "en": "🆘 Enter message for techsupport",
             "ru": "🆘 Введите сообщение для техподдержки"
         },
+        "GHANGE_SERVER": {
+            "en": "Change server",
+            "ru": "Сменить сервер"
+        },
+        "SERVER_CHANGED": {
+            "en": "✅ Server has been changed",
+            "ru": "✅ Сервер был успешно изменен"
+        },
         "TUTORIAL_DESCRIPTION" : {
             "en": f""" 
 <b>Quick guide:</b>

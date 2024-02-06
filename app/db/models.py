@@ -64,6 +64,8 @@ class User(Base):
     status = Column(Enum(UserStatus), nullable=False, default=UserStatus.active)
     used_traffic = Column(BigInteger, default=0)
     node_usages = relationship("NodeUserUsage", back_populates="user", cascade="all, delete-orphan")
+    node_user = relationship("NodeUser", back_populates="user", cascade="all, delete-orphan")
+
     data_limit = Column(BigInteger, nullable=True)
     data_limit_reset_strategy = Column(
         Enum(UserDataLimitResetStrategy),
@@ -76,7 +78,6 @@ class User(Base):
     admin = relationship("Admin", back_populates="users")
     tguser = relationship("TgUser", back_populates="users", cascade="all, delete-orphan")
     payments = relationship("PayTransactions", back_populates="user", cascade="all, delete-orphan")
-    node_users = relationship("NodeUser", back_populates="user", cascade="all, delete-orphan")
     created_at = Column(DateTime, default=datetime.utcnow)
 
     @property
@@ -244,6 +245,7 @@ class Node(Base):
     uplink = Column(BigInteger, default=0)
     downlink = Column(BigInteger, default=0)
     user_usages = relationship("NodeUserUsage", back_populates="node", cascade="all, delete-orphan")
+    user_nodes = relationship("NodeUser", back_populates="node", cascade="all, delete-orphan")
     usages = relationship("NodeUsage", back_populates="node", cascade="all, delete-orphan")
 
 
@@ -271,9 +273,9 @@ class NodeUser(Base):
     id = Column(Integer, primary_key=True, index=True)
     created_at = Column(DateTime, unique=False, nullable=False) # one hour per record
     user_id = Column(Integer, ForeignKey("users.id"))
-    user = relationship("User", back_populates="node_usages")
+    user = relationship("User", back_populates="node_user")
     node_id = Column(Integer, ForeignKey("nodes.id"))
-    node = relationship("Node", back_populates="user_usages")
+    node = relationship("Node", back_populates="user_nodes")
 
 
 class NodeUsage(Base):

@@ -7,7 +7,7 @@ from sqlalchemy import and_
 
 from app.db.models import (JWT, Admin, Node, Proxy, ProxyHost, ProxyInbound,
                            ProxyTypes, System, User, TgUser, UserTemplate,
-                           UserUsageResetLogs, NodeUserUsage, NodeUsage)
+                           UserUsageResetLogs, NodeUserUsage, NodeUsage, NodeUser)
 from app.models.admin import AdminCreate, AdminModify, AdminPartialModify
 from app.models.node import NodeCreate, NodeModify, NodeStatus, NodeUsageResponse
 from app.models.proxy import ProxyHost as ProxyHostModify
@@ -435,6 +435,29 @@ def get_user_templates(
         dbuser_templates = dbuser_templates.limit(limit)
 
     return dbuser_templates.all()
+
+def create_user_node(db: Session, dbuser: User, new_node: str):
+    new_node = get_node(db, new_node)
+    if (not new_node):
+        return None
+    dbnodeuser = NodeUser(user_id=dbuser.id,
+                  node_id=new_node.id)
+
+    db.add(dbnodeuser)
+    db.commit()
+    db.refresh(dbnodeuser)
+
+    return dbnodeuser
+
+def update_user_node(db: Session, dbuser: User, new_node: str):
+    new_node = get_node(db, new_node)
+    if (not new_node):
+        return False
+    node_user = dbuser.node_user[0]
+    node_user.node_id = new_node.id
+    db.commit()
+    db.refresh(dbuser)
+    return True
 
 
 def get_node(db: Session, name: str):

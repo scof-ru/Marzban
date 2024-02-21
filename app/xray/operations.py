@@ -59,7 +59,7 @@ def add_user(dbuser: DBUser):
             if inbound.get('network', 'tcp') not in ('tcp', 'kcp') and getattr(account, 'flow', None):
                 account.flow = XTLSFlows.NONE
 
-            _add_user_to_inbound(xray.api, inbound_tag, account)  # main core
+            #_add_user_to_inbound(xray.api, inbound_tag, account)  # main core
             for node in list(xray.nodes.values()):
                 if node.connected and node.started:
                     _add_user_to_inbound(node.api, inbound_tag, account)

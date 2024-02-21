@@ -75,12 +75,12 @@ def usage_command(message):
 
 def add_new_user(from_user, referent):
     # inbounds={"shadowsocks": ["Shadowsocks"], "vless": ["VLESS TCP REALITY"]}
-    inbounds={"vless": ["VLESS TCP REALITY"]}
+    inbounds={"shadowsocks": ["Shadowsocks"], "vless": ["VLESS TCP REALITY"]}
 
     new_user = UserCreate(
         username="user" + str(from_user.id),
         expire=None,
-        data_limit=10*1024*1024*1024,
+        data_limit=0,
         proxies={p: {} for p in inbounds},
         inbounds=inbounds
     )

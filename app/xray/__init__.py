@@ -46,6 +46,7 @@ def hosts(storage: dict):
 
             storage[inbound_tag] = [
                 {
+                    "nodeid": host.nodeid,
                     "remark": host.remark,
                     "address": host.address,
                     "port": host.port,

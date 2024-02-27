@@ -109,6 +109,7 @@ class FormatVariables(dict):
 class ProxyHost(BaseModel):
     remark: str
     address: str
+    nodeid: int
     port: Union[int, None] = None
     sni: Union[str, None] = None
     host: Union[str, None] = None

@@ -207,6 +207,7 @@ class ProxyHost(Base):
         server_default=ProxyHostSecurity.none.name
     )
 
+    nodeid = Column(Integer, ForeignKey("nodes.id"), nullable=False)
     inbound_tag = Column(String(256), ForeignKey("inbounds.tag"), nullable=False)
     inbound = relationship("ProxyInbound", back_populates="hosts")
 

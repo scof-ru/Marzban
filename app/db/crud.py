@@ -33,7 +33,6 @@ def get_or_create_inbound(db: Session, inbound_tag: str):
 
     return inbound
 
-
 def get_hosts(db: Session, inbound_tag: str):
     inbound = get_or_create_inbound(db, inbound_tag)
     return inbound.hosts
@@ -51,12 +50,21 @@ def add_host(db: Session, inbound_tag: str, host: ProxyHostModify):
             inbound=inbound,
             security=host.security,
             alpn=host.alpn,
-            fingerprint=host.fingerprint
+            fingerprint=host.fingerprint,
+            nodeid=host.nodeid
+
         )
     )
     db.commit()
     db.refresh(inbound)
     return inbound.hosts
+
+def update_hosts_by_nodeid(db: Session, node_id: int, remark: str, address: str):
+    proxy_hosts = db.query(ProxyHost).filter(ProxyHost.nodeid == node_id).all()
+    for proxy in proxy_hosts:
+        proxy.remark = remark
+        proxy.address = address
+    db.commit()
 
 
 def update_hosts(db: Session, inbound_tag: str, modified_hosts: List[ProxyHostModify]):

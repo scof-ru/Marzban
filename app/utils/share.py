@@ -502,7 +502,10 @@ def generate_v2ray_links(proxies: dict, inbounds: dict, extra_data: dict) -> lis
 
             format_variables.update({"TRANSPORT": inbound['network']})
             host_inbound = inbound.copy()
+            node_user = extra_data.get("node_user",[])
             for host in xray.hosts.get(tag, []):
+                if (node_user and host['nodeid'] != node_user[0].node_id):
+                    continue
                 try:
                     sni = ''
                     sni_list = host['sni'] or inbound['sni']

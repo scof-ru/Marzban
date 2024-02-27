@@ -38,7 +38,8 @@ def add_node(new_node: NodeCreate,
     if new_node.add_as_new_host is True:
         host = ProxyHost(
             remark=(new_node.name + " ({USERNAME}) [{PROTOCOL} - {TRANSPORT}]"),
-            address=new_node.address
+            address=new_node.address,
+            nodeid=dbnode.id
         )
         for inbound_tag in xray.config.inbounds_by_tag:
             crud.add_host(db, inbound_tag, host)
@@ -147,6 +148,11 @@ def modify_node(node_id: int,
         raise HTTPException(status_code=404, detail="Node not found")
 
     dbnode = crud.update_node(db, dbnode, modified_node)
+
+    remark = (modified_node.name + " ({USERNAME}) [{PROTOCOL} - {TRANSPORT}]")
+    address = modified_node.address
+
+    crud.update_hosts_by_nodeid(db, dbnode.id, remark, address)
 
     xray.operations.remove_node(dbnode.id)
     xray.operations.connect_node(

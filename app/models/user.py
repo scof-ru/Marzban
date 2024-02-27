@@ -15,6 +15,15 @@ from xray_api.types.account import Account
 USERNAME_REGEXP = re.compile(r'^(?=\w{3,32}\b)[a-zA-Z0-9]+(?:_[a-zA-Z0-9]+)*$')
 
 
+class NodeUser(BaseModel):
+    id: int
+    created_at: Union[None, datetime]
+    user_id: int
+    node_id: int
+    class Config:
+        orm_mode = True
+
+
 class UserStatus(str, Enum):
     active = "active"
     disabled = "disabled"
@@ -37,6 +46,7 @@ class UserDataLimitResetStrategy(str, Enum):
 
 class User(BaseModel):
     proxies: Dict[ProxyTypes, ProxySettings] = {}
+    node_user: Union[None,List[NodeUser]]
     expire: int = None
     data_limit: Union[None, int] = Field(ge=0, default=None, description="data_limit can be 0 or greater")
     data_limit_reset_strategy: UserDataLimitResetStrategy = UserDataLimitResetStrategy.no_reset
@@ -188,6 +198,8 @@ class UserResponse(User):
     links: List[str] = []
     subscription_url: str = ''
     proxies: dict
+    node_user: List[NodeUser]
+
     excluded_inbounds: Dict[ProxyTypes, List[str]] = {}
 
     class Config:

@@ -164,7 +164,7 @@ class BotKeyboard:
         return keyboard
 
     @staticmethod
-    def node_list(nodes: list, username: str = None):
+    def node_list(nodes: list, username: str = None, current_node: str = None):
         keyboard = types.InlineKeyboardMarkup()
         if len(nodes) >= 2:
             nodes = [p for p in nodes]
@@ -175,16 +175,19 @@ class BotKeyboard:
             row = []
             for p in node:
                 status = {
-                    'connected': '✅',
-                    'connecting': '❌',
-                    'error': '❌',
-                    'disabled': '❌'
+                    'connected': '🟢',
+                    'connecting': '⏳',
+                    'error': '🔴',
+                    'disabled': '🔴'
                 }
                 callback_data=f'nothing'
                 if (username):
                     callback_data=f'activate:{username}:{p.name}'
+                cur_node = ''
+                if (current_node == p.name):
+                    cur_node = ' ✅'
                 row.append(types.InlineKeyboardButton(
-                    text=f"{p.name} ({status[p.status]})",
+                    text=f"{status[p.status]} {p.name} {cur_node}",
                     callback_data=callback_data
                 ))
             keyboard.row(*row)

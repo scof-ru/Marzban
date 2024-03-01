@@ -155,6 +155,10 @@ def activate_user_nodes(call: types.CallbackQuery):
 
     with GetDB() as db:
         nodes = crud.get_nodes(db)
+        dbuser = crud.get_user(db, username)
+        node = dbuser.node_user
+        if (node and dbuser.node_user[0].node):
+            current_node = dbuser.node_user[0].node.name
         text = """💻 Nodes:
 ✅ Connected
 ⏳ Conencting
@@ -168,7 +172,7 @@ def activate_user_nodes(call: types.CallbackQuery):
         call.message.message_id,
         parse_mode="HTML",
         reply_markup=BotKeyboard.node_list(
-            nodes, username)
+            nodes, username, current_node)
     )
 
 
@@ -377,10 +381,10 @@ def nodes_command(call: types.CallbackQuery):
     with GetDB() as db:
         nodes = crud.get_nodes(db)
         text = """💻 Nodes:
-✅ Connected
-❌ Conencting
-❌ Error
-❌ Disabled
+🟢 Connected
+⏳ Conencting
+🔴 Error
+🔴 Disabled
 """
 
     bot.edit_message_text(

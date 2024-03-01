@@ -232,20 +232,32 @@ def change_server(call: types.CallbackQuery):
 
     with GetDB() as db:
         dbuser = get_dbuser(call, db)
+        user = UserResponse.from_orm(dbuser)
         if (dbuser.node_user):
-            crud.update_user_node(db, dbuser, server)
+            dbuser = crud.update_user_node(db, dbuser, server)
         else:
-            crud.create_user_node(db, dbuser, server)
+            dbuser = crud.create_user_node(db, dbuser, server)
 
         xray.operations.add_user(dbuser)
 
-    bot.edit_message_text(
-        UserBotMessages.get_message("SERVER_CHANGED"),
-        call.message.chat.id,
-        call.message.message_id,
-        parse_mode="HTML",
-        reply_markup=UserBotKeyboard.main_menu()
-    )
+
+
+    user = UserResponse.from_orm(dbuser)
+    for link in user.links:
+        f = io.BytesIO()
+        qr = qrcode.QRCode(border=6)
+        qr.add_data(link)
+        qr.make_image().save(f)
+        f.seek(0)
+        bot.send_photo(
+            call.message.chat.id,
+            photo=f,
+            caption=f"<code>{link}</code>",
+            parse_mode="HTML"
+        )
+
+    return bot.edit_message_text(UserBotMessages.get_message("SERVER_CHANGED"), call.message.chat.id, call.message.message_id, parse_mode="HTML", reply_markup=UserBotKeyboard.main_menu())
+
 
 
 @bot.callback_query_handler(cb_query_equals('tutorial_request'))

@@ -128,6 +128,18 @@ To get started, use the buttons below.""",
             "en": "✅ Server has been changed",
             "ru": "✅ Сервер был успешно изменен"
         },
+        "USER_STATUS_EXPIRING": {
+            "en": "Your data plan is expiring. You have {days_left} days left",
+            "ru": "Ваш тарифный план истекает. У вас осталось {days_left} дней"
+        },
+        "BUY_PACKAGE": {
+            "en": "Buy / extend package",
+            "ru": "Купить / продлить тарифный план"
+        },
+        "BUY_PACKAGE_DESCRIPTION": {
+            "en": "Now it's possible to buy package only manually. Package plan: \n<b>2 USD</b> per month\n<b>1.5 USD</b> per month (if pay for 12 months in advance).",
+            "ru": "Стоимость подписки:\n<b>2 USD</b> в месяц\n<b>1.5 USD</b> в месяц(при условии покупки сразу на год).\n"
+        },
         "TUTORIAL_DESCRIPTION" : {
             "en": f""" 
 <b>Quick guide:</b>

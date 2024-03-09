@@ -10,10 +10,22 @@ from app import xray
 class UserBotKeyboard:
 
     @staticmethod
+    def payment_item():
+        keyboard = types.InlineKeyboardMarkup()
+        keyboard.add(
+            types.InlineKeyboardButton(text='💲 {}'.format(UserBotMessages.get_message("BUY_PACKAGE")), callback_data='buy_package')
+        )
+
+        return keyboard
+
+    @staticmethod
     def main_menu():
         keyboard = types.InlineKeyboardMarkup()
         keyboard.add(
             types.InlineKeyboardButton(text='ℹ {}'.format(UserBotMessages.get_message("GET_INFO")), callback_data='get_info')
+        )
+        keyboard.add(
+            types.InlineKeyboardButton(text='💲 {}'.format(UserBotMessages.get_message("BUY_PACKAGE")), callback_data='buy_package')
         )
         keyboard.add(
             types.InlineKeyboardButton(text='🔑 {}'.format(UserBotMessages.get_message("GET_KEYS")), callback_data='get_keys')

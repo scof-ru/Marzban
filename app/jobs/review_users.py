@@ -5,6 +5,7 @@ from app import logger, scheduler, xray
 from app.db import GetDB, get_users, update_user_status
 from app.models.user import UserStatus
 from app.utils import report
+from dateutil.relativedelta import relativedelta
 
 
 def review():
@@ -27,5 +28,16 @@ def review():
 
             logger.info(f"User \"{user.username}\" status changed to {status}")
 
+def review_expire_date():
+    deadline_date = datetime.now() + relativedelta(days=3)
+    with GetDB() as db:
+        for user in get_users(db, status=UserStatus.active):
+            if user.expire:
+                expired_date = datetime.fromtimestamp(user.expire)
+                delta = expired_date - datetime.now()
+                if (delta.days <= 3):
+                    report.user_expiring(user.username, delta.days)
+                    logger.info(f"User \"{user.username}\" expired notification")
 
 scheduler.add_job(review, 'interval', seconds=5)
+scheduler.add_job(review_expire_date, 'interval', days=1)

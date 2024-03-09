@@ -7,6 +7,8 @@ from app.telegram import bot
 from telebot.apihelper import ApiTelegramException
 from datetime import datetime
 from app.telegram.utils.keyboard import BotKeyboard
+from app.telegram.utils.user_keyboard import UserBotKeyboard
+
 from app.utils.system import readable_size
 from config import TELEGRAM_ADMIN_ID
 from telebot.formatting import escape_html
@@ -23,6 +25,7 @@ def report(message: str, parse_mode="html", keyboard=None):
 def report_client(username: str, message: str, parse_mode="html", keyboard=None):
     id = username.replace("user", "")
     id = int(id)
+
     with GetDB() as db:
         tguser = crud.get_tguser_by_id(db, id)
         if tguser:
@@ -129,3 +132,9 @@ def report_client_status_change(username: str, status: str):
         status=status.capitalize()
     )
     return report_client(username, text)
+
+def report_status_expiring(username: str, days_left: int):
+    text = UserBotMessages.get_message("USER_STATUS_EXPIRING").format(
+        days_left=str(days_left),
+    )
+    return report_client(username, text, keyboard=UserBotKeyboard.payment_item())

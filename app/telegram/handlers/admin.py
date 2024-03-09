@@ -152,7 +152,7 @@ def activate_user_command(call: types.CallbackQuery):
 @bot.callback_query_handler(cb_query_startswith("change_node:"), is_admin=True)
 def activate_user_nodes(call: types.CallbackQuery):
     username = call.data.split(":")[1]
-
+    current_node = None
     with GetDB() as db:
         nodes = crud.get_nodes(db)
         dbuser = crud.get_user(db, username)

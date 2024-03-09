@@ -65,6 +65,7 @@ def update_hosts_by_nodeid(db: Session, node_id: int, remark: str, address: str)
         proxy.remark = remark
         proxy.address = address
     db.commit()
+    db.expire_all()
 
 
 def update_hosts(db: Session, inbound_tag: str, modified_hosts: List[ProxyHostModify]):
@@ -465,7 +466,7 @@ def update_user_node(db: Session, dbuser: User, new_node: str):
     node_user.node_id = new_node.id
     db.commit()
     db.refresh(dbuser)
-    return True
+    return dbuser
 
 
 def get_node(db: Session, name: str):

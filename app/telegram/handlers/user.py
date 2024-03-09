@@ -1,4 +1,5 @@
-from datetime import datetime
+from datetime import datetime, timedelta
+from dateutil.relativedelta import relativedelta
 from app.db import GetDB, crud
 from app.models.user import UserResponse
 from app.telegram import bot
@@ -6,7 +7,7 @@ from app.telegram.handlers.report import report_new_user
 from app.telegram.utils.custom_filters import (cb_query_equals,
                                                cb_query_startswith)
 from app.telegram.utils.user_bot_messages import UserBotMessages
-from telebot.formatting import escape_markdown
+from telebot.formatting import escape_markdown, escape_html
 from sqlalchemy.orm import Session
 
 
@@ -76,10 +77,10 @@ def usage_command(message):
 def add_new_user(from_user, referent):
     # inbounds={"shadowsocks": ["Shadowsocks"], "vless": ["VLESS TCP REALITY"]}
     inbounds={"shadowsocks": ["Shadowsocks"], "vless": ["VLESS TCP REALITY"]}
-
+    trial_date = datetime.today() + relativedelta(days=3)
     new_user = UserCreate(
         username="user" + str(from_user.id),
-        expire=None,
+        expire=trial_date.timestamp(),
         data_limit=0,
         proxies={p: {} for p in inbounds},
         inbounds=inbounds
@@ -165,6 +166,12 @@ def get_user_info_text(
     return text
 
 
+@bot.callback_query_handler(cb_query_startswith('buy_package'))
+def buy_package_command(call: types.CallbackQuery):
+    text = UserBotMessages.get_message("BUY_PACKAGE_DESCRIPTION")
+
+    edit_message(call, (text))
+
 
 @bot.callback_query_handler(cb_query_startswith('get_info'))
 def get_info_command(call: types.CallbackQuery):
@@ -175,6 +182,7 @@ def get_info_command(call: types.CallbackQuery):
         username=user.username, inbounds=user.inbounds,
         data_limit=user.data_limit, usage=user.used_traffic, expire=user.expire, status=user.status)
     edit_message(call, text)
+
 
 @bot.callback_query_handler(cb_query_equals('get_keys'))
 def get_keys_command(call: types.CallbackQuery):

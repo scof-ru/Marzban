@@ -24,8 +24,10 @@ def techsupport_command(call: types.CallbackQuery):
     bot.register_next_step_handler(username_msg, forward_to_chat)
 
 def buy_month_command(message: types.Message):
+
     forward_to_chat(message)
 
+    text = UserBotMessages.get_message("WAIT_ADMIN_RESPONSE")
     bot.send_message(
         message.chat.id,
         text,

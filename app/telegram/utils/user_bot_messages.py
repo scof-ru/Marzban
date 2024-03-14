@@ -132,6 +132,23 @@ To get started, use the buttons below.""",
             "en": "Your data plan is expiring. You have {days_left} days left",
             "ru": "Ваш тарифный план истекает. У вас осталось {days_left} дней"
         },
+        "BUY_MONTH_1": {
+            "en": "Buy 1 month",
+            "ru": "Купить 1 месяц"
+        },
+        "BUY_MONTH_3": {
+            "en": "Buy 3 months",
+            "ru": "Купить 3 месяца"
+        },
+        "BUY_MONTH_6": {
+            "en": "Buy 6 months",
+            "ru": "Купить 6 месяцев"
+        },
+        "BUY_MONTH_12": {
+            "en": "Buy 12 months",
+            "ru": "Купить 12 месяцев"
+        },
+
         "BUY_PACKAGE": {
             "en": "Buy / extend package",
             "ru": "Купить / продлить тарифный план"
@@ -139,6 +156,10 @@ To get started, use the buttons below.""",
         "BUY_PACKAGE_DESCRIPTION": {
             "en": "Now it's possible to buy package only manually. Package plan: \n<b>2 USD</b> per month\n<b>1.5 USD</b> per month (if pay for 12 months in advance).",
             "ru": "Стоимость подписки:\n<b>2 USD</b> в месяц\n<b>1.5 USD</b> в месяц(при условии покупки сразу на год).\n"
+        },
+        "WAIT_ADMIN_RESPONSE": {
+            "en": "Wait for the admin response",
+            "ru": "Ваш запрос отправлен, дождитесь ответа администратора"
         },
         "TUTORIAL_DESCRIPTION" : {
             "en": f""" 

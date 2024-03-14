@@ -10,6 +10,24 @@ from app import xray
 class UserBotKeyboard:
 
     @staticmethod
+    def payment_month_items():
+        keyboard = types.ReplyKeyboardMarkup()
+        keyboard.add(
+            types.KeyboardButton(text='{}'.format(UserBotMessages.get_message("BUY_MONTH_1")))
+        )
+        keyboard.add(
+            types.KeyboardButton(text='{}'.format(UserBotMessages.get_message("BUY_MONTH_3")))
+        )
+        keyboard.add(
+            types.KeyboardButton(text='{}'.format(UserBotMessages.get_message("BUY_MONTH_6")))
+        )
+        keyboard.add(
+            types.KeyboardButton(text='{}'.format(UserBotMessages.get_message("BUY_MONTH_12")))
+        )
+
+        return keyboard
+
+    @staticmethod
     def payment_item():
         keyboard = types.InlineKeyboardMarkup()
         keyboard.add(

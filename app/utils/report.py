@@ -53,3 +53,11 @@ def user_deleted(username: str, by: str) -> None:
     except Exception:
         pass
     notify(Notification(username=username, action="user_deleted"))
+
+
+def user_expiring(username: str, days_left: int) -> None:
+    try:
+        telegram.report_status_expiring(username=username, days_left=days_left)
+    except Exception:
+        pass
+    notify(Notification(username=username, action="user_expiring"))

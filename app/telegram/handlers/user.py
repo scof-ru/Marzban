@@ -4,6 +4,7 @@ from app.db import GetDB, crud
 from app.models.user import UserResponse
 from app.telegram import bot
 from app.telegram.handlers.report import report_new_user
+from app.telegram.handlers.tech_support import buy_month_command
 from app.telegram.utils.custom_filters import (cb_query_equals,
                                                cb_query_startswith)
 from app.telegram.utils.user_bot_messages import UserBotMessages
@@ -170,7 +171,13 @@ def get_user_info_text(
 def buy_package_command(call: types.CallbackQuery):
     text = UserBotMessages.get_message("BUY_PACKAGE_DESCRIPTION")
 
-    edit_message(call, (text))
+    wait_message = bot.send_message(
+        call.message.chat.id,
+        text,
+        parse_mode="HTML",
+        reply_markup=UserBotKeyboard.payment_month_items()
+    )
+    bot.register_next_step_handler(wait_message, buy_month_command)
 
 
 @bot.callback_query_handler(cb_query_startswith('get_info'))

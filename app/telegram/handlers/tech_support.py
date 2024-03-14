@@ -23,6 +23,17 @@ def techsupport_command(call: types.CallbackQuery):
     #schedule_delete_message(template_msg.message_id)
     bot.register_next_step_handler(username_msg, forward_to_chat)
 
+def buy_month_command(message: types.Message):
+    forward_to_chat(message)
+
+    bot.send_message(
+        message.chat.id,
+        text,
+        parse_mode="HTML",
+        reply_markup=types.ReplyKeyboardRemove()
+    )
+
+
 def forward_to_chat(message: types.Message):
     forwarded = bot.forward_message(TELEGRAM_SUPPORT_CHAT_ID, message.chat.id, message.message_id)
     if not forwarded.forward_from:

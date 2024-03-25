@@ -248,6 +248,7 @@ class Node(Base):
     user_usages = relationship("NodeUserUsage", back_populates="node", cascade="all, delete-orphan")
     user_nodes = relationship("NodeUser", back_populates="node", cascade="all, delete-orphan")
     usages = relationship("NodeUsage", back_populates="node", cascade="all, delete-orphan")
+    hosts = relationship("ProxyHost", back_populates="nodeid", cascade="all, delete-orphan")
 
 
 class NodeUserUsage(Base):

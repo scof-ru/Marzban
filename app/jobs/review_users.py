@@ -39,5 +39,6 @@ def review_expire_date():
                     report.user_expiring(user.username, delta.days)
                     logger.info(f"User \"{user.username}\" expired notification")
 
+review_expire_date()
 scheduler.add_job(review, 'interval', seconds=5)
 scheduler.add_job(review_expire_date, 'interval', days=1)

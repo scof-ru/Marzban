@@ -1,11 +1,12 @@
 from app.telegram import bot
 from telebot import types
+from telebot.apihelper import ApiTelegramException
 from app.telegram.utils.custom_filters import (cb_query_equals,
                                                cb_query_startswith)
 from app.telegram.utils.user_keyboard import UserBotKeyboard
 from app.telegram.utils.user_bot_messages import UserBotMessages
 
-
+from app import logger
 from config import TELEGRAM_SUPPORT_CHAT_ID
 from app.db import GetDB, crud
 
@@ -70,12 +71,14 @@ def forward_to_all_users(message):
         tgusers = crud.get_tguser_active(db)
         for user in tgusers:
             user_id = user.id
-            bot.copy_message(
-                message_id=message.message_id,
-                chat_id=user_id,
-                from_chat_id=message.chat.id
-            )
-
+            try:
+                bot.copy_message(
+                    message_id=message.message_id,
+                    chat_id=user_id,
+                    from_chat_id=message.chat.id
+                )
+            except ApiTelegramException as e:
+                logger.error(e)
 
 @bot.message_handler(content_types=['text'], is_techsupport=True)
 def forward_to_user(message):

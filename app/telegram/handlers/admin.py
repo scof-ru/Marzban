@@ -982,7 +982,7 @@ def confirm_user_command(call: types.CallbackQuery):
             user = UserResponse.from_orm(db_user)
             node_name = None
             if (db_user.node_user):
-                node = get_node_by_id(db_user.node_user.node_id)
+                node = crud.get_node_by_id(db, db_user.node_user[0].node_id)
                 if (node):
                     node_name = node.name
 
@@ -1059,7 +1059,7 @@ def confirm_user_command(call: types.CallbackQuery):
                 user = UserResponse.from_orm(db_user)
                 node_name = None
                 if (db_user.node_user):
-                    node = get_node_by_id(db_user.node_user.node_id)
+                    node = crud.get_node_by_id(db, db_user.node_user[0].node_id)
                     if (node):
                         node_name = node.name
         except sqlalchemy.exc.IntegrityError:

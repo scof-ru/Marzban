@@ -183,8 +183,8 @@ Windows - <a href="https://github.com/MatsuriDayo/nekoray/releases/download/3.24
 \t4. Импортируйте ключ в приложение скопировав ключ или по QR коду
 
 <b>Приложения:</b>
-Android - <a href="https://play.google.com/store/apps/details?id=com.v2ray.ang">v2rayng</a>
-iOS/MacOS - <a href="https://apps.apple.com/us/app/foxray/id6448898396">foxray</a>
+Android - <a href="https://play.google.com/store/apps/details?id=com.v2raytun.android">v2raytun</a>
+iOS/MacOS - <a href="https://apps.apple.com/us/app/v2box-v2ray-client/id6446814690?l=ru">v2box</a>
 Linux - <a href="https://github.com/MatsuriDayo/nekoray/releases/download/3.24/nekoray-3.24-2023-10-28-debian-x64.deb">Nekoray.deb</a>\t <a href="https://github.com/MatsuriDayo/nekoray/releases/download/3.24/nekoray-3.24-2023-10-28-debian-x64.deb">Nekoray.AppImage</a>
 Windows - <a href="https://github.com/MatsuriDayo/nekoray/releases/download/3.24/nekoray-3.24-2023-10-28-windows64.zip">Nekoray</a>
 \n\n"""

@@ -301,6 +301,19 @@ def terms_of_use_command(call: types.CallbackQuery):
         disable_web_page_preview=True
     )
 
+@bot.callback_query_handler(cb_query_equals('donate'))
+def donate_command(call: types.CallbackQuery):
+    text = UserBotMessages.get_message("DONATE")
+
+    bot.edit_message_text(
+        text,
+        call.message.chat.id,
+        call.message.message_id,
+        parse_mode="HTML",
+        reply_markup=UserBotKeyboard.main_menu(),
+        disable_web_page_preview=True
+    )
+
 @bot.callback_query_handler(cb_query_equals('get_referal_link'))
 def get_referal_link_command(call: types.CallbackQuery):
     text = UserBotMessages.get_message("SHARE_LINK")

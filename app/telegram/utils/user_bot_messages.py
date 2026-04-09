@@ -212,6 +212,20 @@ Windows - <a href="https://github.com/MatsuriDayo/nekoray/releases/download/3.24
 5. Нельзя качать торренты
 6. Если обнаружили ошибку или проблему - пишите в тех. поддержку
 """
+    },
+    "DONATE_LABEL" : {
+        "en": "Make a donation",
+        "ru": "Поддержка проекта"
+    },
+    "DONATE" : {
+            "en": f""" 
+Boosty subscription: https://boosty.to/wbadmin/purchase/3870064?ssource=DIRECT&share=subscription_link
+Donation: https://boosty.to/wbadmin/single-payment/donation/793351/target?share=target_link
+""",
+            "ru": f""" 
+Подписка на boosty: https://boosty.to/wbadmin/purchase/3870064?ssource=DIRECT&share=subscription_link
+Донаты: https://boosty.to/wbadmin/single-payment/donation/793351/target?share=target_link
+"""
     }
     }
 

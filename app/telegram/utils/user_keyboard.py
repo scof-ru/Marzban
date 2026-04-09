@@ -63,6 +63,9 @@ class UserBotKeyboard:
         keyboard.add(
             types.InlineKeyboardButton(text='🆘 {}'.format(UserBotMessages.get_message("REPORT_PROBLEMS")), callback_data='techsupport_request')
         )
+        keyboard.add(
+            types.InlineKeyboardButton(text='💲 {}'.format(UserBotMessages.get_message("DONATE_LABEL")), callback_data='donate')
+        )
 
         return keyboard
 
